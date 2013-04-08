@@ -5,15 +5,19 @@
 # We are using method names to determine controller actions for clearness.
 
 module.exports = (app) ->
-  #   - _/_ -> controllers/index/index method
+  #  socket.io
+  app.all '/socket.io/socket.io.js', (req,res,next) ->
+    res.sendfile '/socket.io/socket.io.js'
+
+  #  index
   app.all '/', (req, res, next) ->
     res.render "index"
 
-  #   - _/**:controller**_  -> controllers/***:controller***/index method
+  #  ページ一覧
   app.all '/:name', (req, res, next) ->
     res.render "article", { name: req.params.name  }
 
-  #   - _/**:controller**/**:method**_ -> controllers/***:controller***/***:method*** method
+  #  記事
   app.all '/:name/:article', (req, res, next) ->
     res.render "article",{ name: req.params.name, article:req.params.article   }
 

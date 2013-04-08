@@ -5,17 +5,24 @@
 // [if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]
 head
   meta(charset='utf-8')
-  title nikezono.net
+  if locals.name != null
+    title= locals.name + ":ページリスト"
+  else
+    title WYSIWIKI
   meta(name='description', content='wysiwiki')
   meta(name='author', content='wysiwiki')
   // Mobile Specific
   meta(name="viewport", content="width=device-width, initial-scale=1.0")
+  meta(http-equiv='Content-Script-Type', content='text/javascript')
+  meta(http-equiv='Content-Style-Type', content='text/css')
 
   // CSS
   != css("bootstrap.min")
   != css("bootstrap-responsive.min")
   != css('jquery-ui-1.10.2.min')
   != css('hubinfo.min')
+  != css('normalize')
+  != css('foundation.min')
 
   != css('app')
 
@@ -27,11 +34,32 @@ head
   != js('backbone')
   != js('jquery-ui-1.10.2.min')
   != js('hubinfo.min')
+  != js('freshereditor.min')
+  != js('foundation.min') //Foundation以下にいろいろ入ってる
+  != js('vendor/custom.modernizr')
+  != js('vendor/zepto')
 
   != js('app')
+  != js('/socket.io/socket.io.js')
 
 body
-  block content
+  .container
+    .span4
+      #left
+        if locals.name != null
+          h1.logo= locals.name
+        else
+          h1.logo= WYSIWIKI
+        p.desc 見たまんま書いてしまえるWiki
 
+        ul
+          li
+            a#home home
+          li
+            a#about about
 
+    .span7
+      h2.title= locals.article
+      #content-editable(contenteditable='true')
+        block content
 | </html>

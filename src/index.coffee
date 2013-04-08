@@ -2,10 +2,15 @@ express = require 'express'
 stylus = require 'stylus'
 assets = require 'connect-assets'
 mongoose = require 'mongoose'
+socketio = require 'socket.io'
+
 
 #### Basic application initialization
 # Create app instance.
 app = express()
+
+#### Socket.io
+io = socketio.listen app
 
 
 # Define Port

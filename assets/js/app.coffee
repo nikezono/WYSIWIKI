@@ -1,4 +1,9 @@
 $ ->
+  $('#content-editable').keyup (e)->
+    console.log e
+
+###
+$ ->
   Router = Backbone.Router.extend(
     routes:
       "": "index"
@@ -27,3 +32,4 @@ $ ->
   $("a#about").click ->
     window.router.navigate "about",
       trigger: true
+###
