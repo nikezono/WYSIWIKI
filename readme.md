@@ -4,14 +4,22 @@ WYSYWIKI - WYSIWYGなWiki
 * node.js
 * socket.io
 * redisで記事管理
+* テンプレートエンジンはjade
+* [express-coffee](http://github.com/twilson63/express-coffee) をcloneしているので全部coffeeで書く
+*
+
+#ルーティング(基本的に[Gyazz](http://github.com/masui/gyazz)を踏襲)
+    /  - index.jade
+    /:name - 一覧ページ
+    /:name/:article - 記事ページ
 
 
 #機能
 * socket.emitしてリアルタイムに更新しあう(Google-docsライクにしよう)
 
 #メモ&提案とか
-* fresherEditorで文字列をリッチに編集できるのでそれ使う
-http://jquer.in/jquery-plugins-for-html5-forms/freshereditor/
+* [fresherEditor](http://jquer.in/jquery-plugins-for-html5-forms/freshereditor/)で文字列をリッチに編集できるのでそれ使う
+
 * Foundation UIとかいうのが最近はBootstrapより受けてるのでそれで
 
 #アイデア
