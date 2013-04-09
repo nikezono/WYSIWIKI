@@ -6,6 +6,8 @@
 
 module.exports = (app) ->
 
+  db = require('redis').createClient()
+
   #  index
   app.all '/', (req, res, next) ->
     res.render "index"
@@ -16,7 +18,8 @@ module.exports = (app) ->
 
   #  記事
   app.all '/:wiki/:article', (req, res, next) ->
-    res.render "article",{ wiki: req.params.wiki, article:req.params.article   }
+    db.get req.params.wiki + '/' + req.params.article, (err,reply) ->
+      res.render "article",{ wiki: req.params.wiki, article:req.params.article, content:reply  }
 
   # If all else failed, show 404 page
   app.all '/*', (req, res) ->

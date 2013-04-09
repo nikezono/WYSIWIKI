@@ -31,22 +31,25 @@ $ ->
       #記事ページのみ
       unless article is ''
 
-        #keyupごとに
+        #keyupごとのイベント
+
         $('#content-editable').keyup (e) ->
           #編集したことを通知
           res = {}
           res.msg = $("#content-editable").html()
           res.article = article
+          res.wiki = wiki
           socket.emit "msg send",res
+
+          #keyupごとにDB保存する
+          #それはヤバイか?
+          socket.emit "db send",res
 
         #他の画面で編集がされたとき
         socket.on "msg push", (msg) ->
           #console.log "other user editted"
           console.log msg.replace '"', ''
           $("#content-editable").html(msg)
-
-        socket.on "msg updateDB", (msg) ->
-          console.log msg
 
 ###
 $ ->
