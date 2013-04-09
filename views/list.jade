@@ -1,0 +1,7 @@
+extends layout
+block list-content
+	each value,key in articles
+		div
+			a(href='/'+locals.wiki+'/'+key)= key
+
+

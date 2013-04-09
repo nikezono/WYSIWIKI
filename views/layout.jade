@@ -7,8 +7,8 @@ head
   meta(charset='utf-8')
   if locals.article != null
     title= locals.article
-  else if locals.name != null
-    title= locals.name + ":ページリスト"
+  else if locals.wiki != null
+    title= locals.wiki + ":ページリスト"
   else
     title WYSIWIKI
   meta(name='description', content='wysiwiki')
@@ -47,34 +47,37 @@ head
 
 body
   .container
-    .span4
-      #left
-        if locals.name != null
-          h1.logo= locals.name
-        else
-          h1.logo WYSIWIKI
-        p.desc 見たまんま書いてしまえるWiki
+    .row-fluid
+      .span4
+        #left
+          if locals.wiki != null
+            h1.logo= locals.wiki
+          else
+            h1.logo WYSIWIKI
+          p.desc 見たまんま書いてしまえるWiki
 
-        ul
-          li
-            a#home home
-          li
-            a#about about
+          ul
+            li
+              a#home home
+            li
+              a#about about
 
-        if locals.wiki != null
-          #wiki-connection
-            グループ接続人数
-            #wiki-number.pull-right 1
+          if locals.wiki != null
+            #wiki-connection
+              グループ接続人数
+              #wiki-number.pull-right 1
+          if locals.article != null
+            #article-connection
+              ページ接続人数
+              #article-number.pull-right 1
+
+      .span7
+        h2.title= locals.article
+        block index-content
+        block list-content
+        #content-editable(contenteditable='true')
+          block content
+        br
         if locals.article != null
-          #article-connection
-            ページ接続人数
-            #article-number.pull-right 1
-
-    .span7
-      h2.title= locals.article
-      block index-content
-      #content-editable(contenteditable='true')
-        block content
-      br
-      .small ↑クリックして編集可能
+          .small ↑クリックして編集可能
 | </html>

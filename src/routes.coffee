@@ -14,11 +14,14 @@ module.exports = (app) ->
 
   #  ページ一覧
   app.all '/:wiki', (req, res, next) ->
-    res.render "article", { wiki: req.params.wiki }
+    db.hgetall req.params.wiki, (err, reply) ->
+      reply = "" if reply is null
+      console.log reply
+      res.render "list", { wiki: req.params.wiki, articles:reply }
 
   #  記事
   app.all '/:wiki/:article', (req, res, next) ->
-    db.get req.params.wiki + '/' + req.params.article, (err,reply) ->
+    db.hget req.params.wiki,req.params.article, (err,reply) ->
       res.render "article",{ wiki: req.params.wiki, article:req.params.article, content:reply  }
 
   # If all else failed, show 404 page

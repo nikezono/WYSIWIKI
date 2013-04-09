@@ -50,8 +50,10 @@ io.sockets.on "connection", (socket) ->
     io.sockets.to(res.article).emit 'msg push',res.msg
 
   #Save DB
+  # wikiのハッシュの中にArray作ってpushしてる
   socket.on "db send", (res) ->
-    db.set res.wiki + '/' + res.article, res.msg, redis.print
+    json = { "title" : res.article, "html" : res.msg }
+    db.hset res.wiki, res.article,res.msg
 
 # Config module exports has `setEnvironment` function that sets app settings depending on environment.
 config = require "./config"
