@@ -13,10 +13,11 @@ app = express()
 server = http.createServer app
 io = socketio.listen server
 
-server.listen 8000
-
 # Define Port
 app.port = process.env.PORT or process.env.VMC_APP_PORT or 8080
+
+server.listen process.env.PORT || 8000
+
 
 # Redis
 db = redis.createClient()
