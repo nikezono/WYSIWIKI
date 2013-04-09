@@ -30,6 +30,8 @@
     , "node-inspector": "*"
     , "ejs": "*"
     , "socket.io": "~0.9.6"
+    , "redis" : "*"
+    , "hiredis" : "*"
   },
   "engines": {
     "node": "*",

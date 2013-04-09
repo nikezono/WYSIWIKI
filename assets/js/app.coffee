@@ -1,34 +1,43 @@
 $ ->
 
-  # 同じwikinameに居る人としか通信しない
+  # 同じwikiに居る人としか通信しない
   # Backbone.jsとかで書いたほうが綺麗?
-  url = document.URL.split "/"
-  wikiname =  url[3]
-  articlename = url[4]
+  url = window.location.pathname.split "/"
+  wiki =  url[1]
+  article = url[2]
 
   # トップページ以外
-less wikiname is ''  un
+  unless wiki is ''
 
     socket = io.connect 'http://localhost'
     socket.on "connect", ->
       console.log "connected"
 
       #同じwikiに居る人とのみ繋がる
+      socket.json.emit 'init', {'wiki':wiki,'article':article}
 
       #新しいユーザが来たとき
-      socket.on 'connect push', ->
+      socket.on 'connect wiki', (num) ->
+        $('#wiki-connection #wiki-number').text(num)
+      socket.on 'connect article', (num) ->
+        $('#article-connection #article-number').text(num)
 
       #ユーザが減った時
-      socket.on 'disconnect push', ->
+      socket.on 'disconnect wiki', (num) ->
+        $('#wiki-connection #wiki-number').text(num)
+      socket.on 'disconnect article', (num) ->
+        $('#article-connection #article-number').text(num)
 
-      unless articlename is ''
+      #記事ページのみ
+      unless article is ''
 
         #keyupごとに
-        $('#content-editable').keyup (e)->
-          #console.log e
-
+        $('#content-editable').keyup (e) ->
           #編集したことを通知
-          socket.emit "msg send", $("#content-editable").html()
+          res = {}
+          res.msg = $("#content-editable").html()
+          res.article = article
+          socket.emit "msg send",res
 
         #他の画面で編集がされたとき
         socket.on "msg push", (msg) ->
@@ -38,8 +47,6 @@ less wikiname is ''  un
 
         socket.on "msg updateDB", (msg) ->
           console.log msg
-
-
 
 ###
 $ ->

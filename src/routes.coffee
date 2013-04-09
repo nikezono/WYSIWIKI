@@ -11,12 +11,12 @@ module.exports = (app) ->
     res.render "index"
 
   #  ページ一覧
-  app.all '/:name', (req, res, next) ->
-    res.render "article", { name: req.params.name  }
+  app.all '/:wiki', (req, res, next) ->
+    res.render "article", { wiki: req.params.wiki }
 
   #  記事
-  app.all '/:name/:article', (req, res, next) ->
-    res.render "article",{ name: req.params.name, article:req.params.article   }
+  app.all '/:wiki/:article', (req, res, next) ->
+    res.render "article",{ wiki: req.params.wiki, article:req.params.article   }
 
   # If all else failed, show 404 page
   app.all '/*', (req, res) ->

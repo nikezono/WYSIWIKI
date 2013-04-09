@@ -15,22 +15,41 @@ io = socketio.listen server
 
 server.listen 8000
 
-#uri = url.parse(request.url).pathname
 
-io.sockets.on "connection", (socket,url) ->
-  console.log 'connected' + uri
+## socket.io
+io.sockets.on "connection", (socket) ->
+  console.log 'connected'
 
-  #ユーザが増えたことを通知
-  socket.broadcast.emit 'connect push',url
+  socket.on 'init', (req) ->
+    #以下いらない?
+    socket.set 'wiki',req.wiki
+    socket.set 'article', req.article
+
+    ## ユーザが増えたことを通知
+
+    #roomに入れて管理する
+    socket.join req.wiki
+    socket.join req.article unless req.article is undefined
+
+    #roomに接続数を通知
+    io.sockets.to(req.wiki).emit 'connect wiki', io.sockets.clients(req.wiki).length
+    io.sockets.to(req.article).emit 'connect article', io.sockets.clients(req.article).length
 
   #他の画面で編集が行われたら
-  socket.on "msg send", (msg) ->
-    socket.broadcast.emit 'msg push' ,msg
+  socket.on "msg send", (res) ->
+    io.sockets.to(res.article).emit 'msg push',res.msg
 
-  #ユーザが減ったことを通知
-  socket.on "disconnect", ->
-    socket.broadcast.emit 'disconnect push', 'disconnect'
-    #console.log 'disconnected'
+  ##ユーザが減ったことを通知
+  socket.on "disconnect",(req) ->
+    console.log "disconnected"
+
+    #roomから出る
+    socket.leave req.wiki
+    socket.leave req.article unless req.article is undefined
+
+    #roomに接続数を通知
+    io.sockets.to(req.wiki).emit 'disconnect wiki',io.sockets.clients(req.wiki).length-1
+    io.sockets.to(req.article).emit 'disconnect article', io.sockets.clients(req.article).length-1
 
 # Config module exports has `setEnvironment` function that sets app settings depending on environment.
 config = require "./config"

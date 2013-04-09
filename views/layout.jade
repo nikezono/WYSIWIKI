@@ -61,6 +61,15 @@ body
           li
             a#about about
 
+        if locals.wiki != null
+          #wiki-connection
+            グループ接続人数
+            #wiki-number.pull-right 1
+        if locals.article != null
+          #article-connection
+            ページ接続人数
+            #article-number.pull-right 1
+
     .span7
       h2.title= locals.article
       block index-content
