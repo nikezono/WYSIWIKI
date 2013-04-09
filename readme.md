@@ -1,5 +1,12 @@
 #WYSYWIKI - WYSIWYGなWiki
 
+##なにこれ
+[Gyazz](http://github.com/masui/gyazz)を意識したWebsocketによるwiki
+イージーな操作と動作の軽快さを目指す
+
+##サンプル
+heroku:[http://wysiwiki.herokuapp.com](http://wysiwiki.herokuapp.com)
+
 ##基本の構成
 ###サーバサイド
 * node.js
