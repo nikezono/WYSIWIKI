@@ -1,21 +1,36 @@
 express = require 'express'
 stylus = require 'stylus'
 assets = require 'connect-assets'
-mongoose = require 'mongoose'
 socketio = require 'socket.io'
+mongoose = require 'mongoose'
+url = require 'url'
+http = require 'http'
 
 
 #### Basic application initialization
 # Create app instance.
 app = express()
+server = http.createServer app
+io = socketio.listen server
 
-#### Socket.io
-io = socketio.listen app
+server.listen 8000
 
+#uri = url.parse(request.url).pathname
 
-# Define Port
-app.port = process.env.PORT or process.env.VMC_APP_PORT or 3030
+io.sockets.on "connection", (socket,url) ->
+  console.log 'connected' + uri
 
+  #ユーザが増えたことを通知
+  socket.broadcast.emit 'connect push',url
+
+  #他の画面で編集が行われたら
+  socket.on "msg send", (msg) ->
+    socket.broadcast.emit 'msg push' ,msg
+
+  #ユーザが減ったことを通知
+  socket.on "disconnect", ->
+    socket.broadcast.emit 'disconnect push', 'disconnect'
+    #console.log 'disconnected'
 
 # Config module exports has `setEnvironment` function that sets app settings depending on environment.
 config = require "./config"
@@ -48,7 +63,8 @@ app.use express.bodyParser()
 routes = require './routes'
 routes(app)
 
+# Define Port
+port = process.env.PORT or process.env.VMC_APP_PORT or 3030
 
-# Export application object
-module.exports = app
+app.listen port, -> console.log "Listening on #{port}\nPress CTRL-C to stop server."
 

@@ -5,9 +5,6 @@
 # We are using method names to determine controller actions for clearness.
 
 module.exports = (app) ->
-  #  socket.io
-  app.all '/socket.io/socket.io.js', (req,res,next) ->
-    res.sendfile '/socket.io/socket.io.js'
 
   #  index
   app.all '/', (req, res, next) ->

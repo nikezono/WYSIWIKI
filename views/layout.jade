@@ -5,7 +5,9 @@
 // [if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]
 head
   meta(charset='utf-8')
-  if locals.name != null
+  if locals.article != null
+    title= locals.article
+  else if locals.name != null
     title= locals.name + ":ページリスト"
   else
     title WYSIWIKI
@@ -38,9 +40,10 @@ head
   != js('foundation.min') //Foundation以下にいろいろ入ってる
   != js('vendor/custom.modernizr')
   != js('vendor/zepto')
+  //!= js('socket.io/socket.io.js')
 
   != js('app')
-  != js('/socket.io/socket.io.js')
+  script(src='//localhost:8000/socket.io/socket.io.js')
 
 body
   .container
@@ -49,7 +52,7 @@ body
         if locals.name != null
           h1.logo= locals.name
         else
-          h1.logo= WYSIWIKI
+          h1.logo WYSIWIKI
         p.desc 見たまんま書いてしまえるWiki
 
         ul
@@ -60,6 +63,7 @@ body
 
     .span7
       h2.title= locals.article
+      block index-content
       #content-editable(contenteditable='true')
         block content
 | </html>
