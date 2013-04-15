@@ -9,20 +9,26 @@ module.exports = (app) ->
   db = require('redis').createClient()
 
   #  index
-  app.all '/', (req, res, next) ->
+  app.get '/', (req, res, next) ->
     res.render "index"
 
   #  ページ一覧
-  app.all '/:wiki', (req, res, next) ->
-    db.hgetall req.params.wiki, (err, reply) ->
+  app.get '/:wiki', (req, res, next) ->
+    db.keys req.params.wiki+'*', (err, reply) ->
       reply = "" if reply is null
-      console.log reply
+      #console.log reply
       res.render "list", { wiki: req.params.wiki, articles:reply }
 
   #  記事
-  app.all '/:wiki/:article', (req, res, next) ->
-    db.hget req.params.wiki,req.params.article, (err,reply) ->
-      res.render "article",{ wiki: req.params.wiki, article:req.params.article, content:reply  }
+  app.get '/:wiki/:article', (req, res, next) ->
+    db.zrevrange req.params.wiki+":"+req.params.article,0,1, (err,members) ->
+      console.log "memb:"+members
+      console.log members.class
+      #console.log req.params.wiki+":"+req.params.article
+      if members is undefined
+        res.render "article", { wiki:req.params.wiki, article:req.params.article,content:"" }
+      else
+        res.render "article",{ wiki: req.params.wiki, article:req.params.article, content:members[0]  }
 
   # If all else failed, show 404 page
   app.all '/*', (req, res) ->

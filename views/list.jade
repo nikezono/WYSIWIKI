@@ -1,7 +1,9 @@
 extends layout
 block list-content
+	ul
 	each value,key in articles
-		div
-			a(href='/'+locals.wiki+'/'+key)= key
+		path = value.split(':')
+		li
+			a(href='/'+locals.wiki+'/'+path[1])= decodeURI(path[1])
 
 

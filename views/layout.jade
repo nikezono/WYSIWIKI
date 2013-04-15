@@ -18,9 +18,13 @@ head
   meta(http-equiv='Content-Script-Type', content='text/javascript')
   meta(http-equiv='Content-Style-Type', content='text/css')
 
+  // Google Fonts Api
+  link(href='http://fonts.googleapis.com/css?family=Esteban|Jacques+Francois|Geo:400,400italic', rel='stylesheet', type='text/css')
+
+
   // CSS
   != css("bootstrap.min")
-  != css("bootstrap-responsive.min")
+  //!= css("bootstrap-responsive.min")
   != css('jquery-ui-1.10.2.min')
   != css('hubinfo.min')
   != css('normalize')
@@ -30,7 +34,7 @@ head
 
   // JS
   != js('jquery-1.9.1.min')
-  != js('bootstrap.min')
+  //!= js('bootstrap.min')
   != js('jquery.pjax')
   != js('underscore')
   != js('backbone')
@@ -40,44 +44,43 @@ head
   != js('foundation.min') //Foundation以下にいろいろ入ってる
   != js('vendor/custom.modernizr')
   != js('vendor/zepto')
+
   //!= js('socket.io/socket.io.js')
+  //サーバごとに変える
+  script(src= '/socket.io/socket.io.js')
 
   != js('app')
-  script(src='//localhost:8000/socket.io/socket.io.js')
 
 body
-  .container
-    .row-fluid
-      .span4
-        #left
-          if locals.wiki != null
-            h1.logo= locals.wiki
-          else
-            h1.logo WYSIWIKI
-          p.desc 見たまんま書いてしまえるWiki
+  .row
+    .large-2.columns.panel
+      h2.logo WYSIWIKI
 
-          ul
-            li
-              a#home home
-            li
-              a#about about
+      .navigation
+        a.small.button.expand(href= '/') Home
+        if locals.wiki != null
+          a.small.button.expand(href='/'+locals.wiki) Page List
 
-          if locals.wiki != null
-            #wiki-connection
-              グループ接続人数
-              #wiki-number.pull-right 1
-          if locals.article != null
-            #article-connection
-              ページ接続人数
-              #article-number.pull-right 1
+      if locals.wiki != null
+        #wiki-connection
+          グループ接続人数
+          #wiki-number.pull-right
+      if locals.article != null
+        #article-connection
+          ページ接続人数
+          #article-number.pull-right
 
-      .span7
-        h2.title= locals.article
-        block index-content
-        block list-content
-        #content-editable(contenteditable='true')
-          block content
-        br
-        if locals.article != null
-          .small ↑クリックして編集可能
+    .large-10.columns.panel
+      if locals.article != null
+        h3.title= locals.article
+      else if locals.wiki != null
+        h3= locals.wiki+ " "
+          small ページ一覧
+      block index-content
+      block list-content
+      #content-editable(contenteditable='true')
+        block content
+      br
+      if locals.article != null
+        .small ↑クリックして編集可能
 | </html>

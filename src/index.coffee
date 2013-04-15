@@ -10,54 +10,12 @@ redis = require 'redis'
 #### Basic application initialization
 # Create app instance.
 app = express()
-server = http.createServer app
-io = socketio.listen server
 
 # Define Port
 app.port = process.env.PORT or process.env.VMC_APP_PORT or 8080
 
-server.listen process.env.PORT || 8000
-
-
 # Redis
 db = redis.createClient()
-
-## socket.io
-io.sockets.on "connection", (socket) ->
-  console.log 'connected'
-
-  #initialize
-  socket.on 'init', (req) ->
-    ## ユーザが増えたことを通知
-    #roomに入れて管理する
-    socket.join req.wiki
-    socket.join req.article unless req.article is undefined
-    #roomに接続数を通知
-    io.sockets.to(req.wiki).emit 'connect wiki', io.sockets.clients(req.wiki).length
-    io.sockets.to(req.article).emit 'connect article', io.sockets.clients(req.article).length
-
-  ##ユーザが減ったことを通知
-  socket.on "disconnect",(req) ->
-    console.log "disconnected"
-
-    #roomから出る
-    socket.leave req.wiki
-    socket.leave req.article unless req.article is undefined
-
-    #roomに接続数を通知
-    io.sockets.to(req.wiki).emit 'disconnect wiki',io.sockets.clients(req.wiki).length-1
-    io.sockets.to(req.article).emit 'disconnect article', io.sockets.clients(req.article).length-1
-
-
-  #他の画面で編集が行われたら
-  socket.on "msg send", (res) ->
-    io.sockets.to(res.article).emit 'msg push',res.msg
-
-  #Save DB
-  # wikiのハッシュの中にArray作ってpushしてる
-  socket.on "db send", (res) ->
-    json = { "title" : res.article, "html" : res.msg }
-    db.hset res.wiki, res.article,res.msg
 
 # Config module exports has `setEnvironment` function that sets app settings depending on environment.
 config = require "./config"
@@ -89,6 +47,17 @@ app.use express.bodyParser()
 # Initialize routes
 routes = require './routes'
 routes(app)
+
+port = app.port;
+
+server = http.createServer app
+server.listen (app.port), ->
+  console.log "socket.io+Express3 server start:"+app.port
+
+io = (require 'socket.io').listen server
+
+socket = require './socketio'
+socket(io,db)
 
 # Define Port
 # Export application object

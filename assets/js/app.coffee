@@ -8,8 +8,7 @@ $ ->
 
   # トップページ以外
   unless wiki is ''
-
-    socket = io.connect 'http://localhost'
+    socket = io.connect()
     socket.on "connect", ->
       console.log "connected"
 
@@ -28,28 +27,30 @@ $ ->
       socket.on 'disconnect article', (num) ->
         $('#article-connection #article-number').text(num)
 
-      #記事ページのみ
-      unless article is ''
+  #記事ページのみ
+  if article
 
-        #keyupごとのイベント
+    socket.on "connect", ->
 
-        $('#content-editable').keyup (e) ->
-          #編集したことを通知
-          res = {}
-          res.msg = $("#content-editable").html()
-          res.article = article
-          res.wiki = wiki
-          socket.emit "msg send",res
+    #keyupごとのイベント
+    $('#content-editable').keyup (e) ->
+      #編集したことを通知
+      res = new Object
+      res.msg = $("#content-editable").html()
+      res.wiki = wiki
+      res.article = wiki+':'+article
+      #console.log "res.article:"+res.article
+      socket.emit "msg send",res
 
-          #keyupごとにDB保存する
-          #それはヤバイか?
-          socket.emit "db send",res
+      #keyupごとにDB保存する
+      #それはヤバイか?
+      socket.emit "db send",res
 
-        #他の画面で編集がされたとき
-        socket.on "msg push", (msg) ->
-          #console.log "other user editted"
-          console.log msg.replace '"', ''
-          $("#content-editable").html(msg)
+    #他の画面で編集がされたとき
+    socket.on "msg push", (msg) ->
+      console.log "other user editted"
+      #console.log msg.replace '"', ''
+      $("#content-editable").html(msg)
 
 ###
 $ ->
